@@ -84,7 +84,8 @@ turtle.onkeypress(right, "Right")
 ####WRITE YOUR CODE HERE!!
 
 turtle.listen()
-turtle.register_shape("trash.gif") #Add trash picture
+turtle.register_shape("trash.gif")
+ # a function that do # a function that doturtle.register_shape("trash.gif") #Add trash picture
                       # Make sure you have downloaded this shape 
                       # from the Google Drive folder and saved it
                       # in the same folder as this Python script
@@ -104,6 +105,32 @@ food_stamps = []
 #4. Don't forget to hide the food turtle!
 for this_food_pos in food_pos :
     food.goto(this_food_pos)
+    food_id = food.stamp()
+    food_stamps.append(food_id)
+    food.hideturtle()
+    
+    
+    
+    
+    
+def make_food():
+    #The screen positions go from -SIZE/2 to +SIZE/2
+    #But we need to make food pieces only appear on game squares
+    #So we cut up the game board into multiples of SQUARE_SIZE.
+    min_x=-int(SIZE_X/2/SQUARE_SIZE)+1
+    max_x=int(SIZE_X/2/SQUARE_SIZE)-1
+    min_y=-int(SIZE_Y/2/SQUARE_SIZE)+1
+    max_y=int(SIZE_Y/2/SQUARE_SIZE)-1
+    
+    #Pick a position that is a random multiple of SQUARE_SIZE
+    food_x = random.randint(min_x,max_x)*SQUARE_SIZE
+    food_y = random.randint(min_y,max_y)*SQUARE_SIZE
+
+ # a function that do    food.goto(food_x,food_y)
+    food_pos.append((food_x,food_y))
+    food_stamps.append(food.stamp())
+        ##2.WRITE YOUR CODE HERE: Add the food turtle's position to the food positions list
+        ##3.WRITE YOUR CODE HERE: Add the food turtle's stamp to the food stamps list
 
 
 
@@ -111,6 +138,7 @@ def move_snake():
     my_pos = snake.pos()
     x_pos = my_pos[0]
     y_pos = my_pos[1]
+    SQUARE_SIZE=20
     
         #If snake.direction is up, then we want the snake to change
         #it’s y position by SQUARE_SIZE
@@ -130,7 +158,22 @@ def move_snake():
         #Make the snake stamp a new square on the screen
         #Hint - use a single function to do this
     new_stamp()
+    turtle.ontimer(move_snake,TIME_STEP)
         ######## SPECIAL PLACE - Remember it for Part 5
+    
+    #If snake is on top of food item
+    if snake.pos() in food_pos:
+        food_index=food_pos.index(snake.pos()) #What does this do?
+        food.clearstamp(food_stamps[food_index]) #Remove eaten food stamp
+        food_pos.pop(food_index) #Remove eaten food position
+        food_stamps.pop(food_index) #Remove eaten food stamp
+        print("You have eaten the food!")
+        SQUARE_SIZE=SQUARE_SIZE*2
+    
+    
+    #HINT: This if statement may be useful for Part 8
+
+   
         
     #remove the last piece of the snake (Hint Functions are FUN!)
     remove_tail()
@@ -153,7 +196,15 @@ def move_snake():
     elif new_y_pos <= DOWN_EDGE:
             print("You hit the right edge! Game over!")
             quit()
-    turtle.ontimer(move_snake,TIME_STEP)
+    if len(food_stamps) <= 6 :
+        make_food()
+
+    for i in range(len(pos_list)):
+        for j in range(len(pos_list)):
+            if pos_list[i]==pos_list[j] and i!=j:
+                print("you ate yourself")
+                quit()
+    
     
 move_snake()
    
